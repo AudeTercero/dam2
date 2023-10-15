@@ -5,6 +5,7 @@ public class Curso {
 	private String nombre;
 	private String descripcion;
 	private HashMap<Integer, Alumno> alumnos;
+	private int cont = 0;
 
 	/**
 	 * @param codCur
@@ -12,20 +13,18 @@ public class Curso {
 	 * @param descripcion
 	 * @param cursos
 	 */
-	public Curso(int codCur, String nombre, String descripcion, HashMap<Integer, Alumno> alumnos) {		
-		this.codCur = codCur;
+	public Curso(String nombre, String descripcion, HashMap<Integer, Alumno> alumnos) {		
+		this.codCur = cont;
 		this.nombre = nombre;
 		this.descripcion = descripcion;
 		this.alumnos = alumnos;
+		cont++;
 	}
 
 	public int getCodCur() {
 		return codCur;
 	}
-
-	public void setCodCur(int codCur) {
-		this.codCur = codCur;
-	}
+	
 
 	public String getNombre() {
 		return nombre;
