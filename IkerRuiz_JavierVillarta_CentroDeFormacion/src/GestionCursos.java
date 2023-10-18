@@ -4,10 +4,10 @@ import java.util.HashMap;
 public class GestionCursos {
 	private HashMap<String,Curso> cursos = new HashMap<>();
 	private String fichero = "Cursos.bin";
-
+	private Scanner sc = new Scanner(System.in);
 	public void menu() {
 		System.out.println("-- GESTION CURSOS --");
-		Scanner sc = new Scanner(System.in);
+		
 		String op = null;
 
 		do {

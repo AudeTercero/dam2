@@ -5,10 +5,10 @@ import java.util.Scanner;
 public class GestionAlumnos {
 	private HashMap<Integer,Alumno> alumnos = new HashMap<>();
 	private String fichero = "Alumnos.bin";
-
+	private Scanner sc = new Scanner(System.in);
 	public void menu() {
 		System.out.println("-- GESTION ALUMNOS --");
-		Scanner sc = new Scanner(System.in);
+		
 		String op = null;
 
 		do {
