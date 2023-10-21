@@ -1,6 +1,7 @@
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class Profesor {
+public class Profesor implements Serializable {
 	private String dni;
 	private String nombre;
 	private String direccion;
@@ -14,12 +15,12 @@ public class Profesor {
 	 * @param telefono
 	 * @param cursos
 	 */
-	public Profesor(String dni, String nombre, String direccion, String telefono, HashMap<Integer, Curso> cursos) {		
+	public Profesor(String dni, String nombre, String direccion, String telefono) {		
 		this.dni = dni;
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.telefono = telefono;
-		this.cursos = cursos;
+		
 	}
 
 	public String getDni() {

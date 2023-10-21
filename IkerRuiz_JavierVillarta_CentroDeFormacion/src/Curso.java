@@ -6,7 +6,7 @@ public class Curso {
 	private String descripcion;
 	private Profesor profe;
 	private HashMap<Integer, Alumno> alumnos;
-	private int cont = 0;
+	private static int cont = 0;
 
 	/**
 	 * @param codCur

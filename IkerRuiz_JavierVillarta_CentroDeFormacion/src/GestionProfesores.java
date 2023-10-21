@@ -2,13 +2,14 @@ import java.util.Scanner;
 import java.util.HashMap;
 
 public class GestionProfesores {
-	private HashMap<String,Curso> cursos = new HashMap<>();
+	private HashMap<String, Curso> cursos = new HashMap<>();
 	private String fichero = "Profesores.bin";
-	private Scanner sc = new Scanner(System.in);
+	private static Scanner sc = new Scanner(System.in);
+	private static Verificaciones verif = new Verificaciones();
 
 	public void menu() {
 		System.out.println("-- GESTION PROFESORES --");
-		
+
 		String op = null;
 
 		do {
@@ -43,6 +44,84 @@ public class GestionProfesores {
 	}
 
 	public static void alta() {
+		Profesor profe;
+		String dni, nombre, direccion, telefono;
+		int contError = 0;
+		boolean fallo = false;
+
+		do {// Inicio de do while que controla si hay fallo
+			dni = sc.nextLine();
+			try {
+				verif.hayAlgo(dni);
+			} catch (MisExceptions e) {
+				System.out.println(e);
+				fallo = true;
+				contError++;
+			}
+		} while (fallo == true && contError != 5);// fin de do while que controla si hay fallo
+
+		if (contError < 5) {
+			contError = 0;
+			fallo = false;
+			do {// Inicio de do while que controla si hay fallo
+				nombre = sc.nextLine();
+				try {
+					verif.hayAlgo(nombre);
+				} catch (MisExceptions e) {
+					System.out.println(e);
+					fallo = true;
+					contError++;
+				}
+			} while (fallo == true && contError != 5);// fin de do while que controla si hay fallo
+
+			if (contError < 5) {
+				fallo = false;
+				contError = 0;
+				do {// Inicio de do while que controla si hay fallo
+					direccion = sc.nextLine();
+					try {
+						verif.hayAlgo(direccion);
+					} catch (MisExceptions e) {
+						System.out.println(e);
+						fallo = true;
+						contError++;
+					}
+				} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
+
+				if (contError < 5) {
+					fallo = false;
+					contError = 0;
+					do {// Inicio de do while que controla si hay fallo
+						telefono = sc.nextLine();
+						try {
+							verif.esNum(telefono);
+							verif.nueveCaracteres(telefono);
+						} catch (MisExceptions e) {
+							System.out.println(e);
+							fallo = true;
+							contError++;
+						}
+					} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
+
+					if (contError != 5) {
+						
+						profe = new Profesor(dni, nombre, direccion, telefono);
+						
+					} else {
+						// msg ERROR
+					}
+
+				} else {
+					// msg ERROR
+				}
+
+			} else {
+				// msg ERROR
+			}
+
+		} else {
+			// msg ERROR
+		}
 
 	}
 
