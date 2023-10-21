@@ -4,6 +4,7 @@ public class Curso {
 	private int codCur;
 	private String nombre;
 	private String descripcion;
+	private Profesor profe;
 	private HashMap<Integer, Alumno> alumnos;
 	private int cont = 0;
 
@@ -13,11 +14,10 @@ public class Curso {
 	 * @param descripcion
 	 * @param cursos
 	 */
-	public Curso(String nombre, String descripcion, HashMap<Integer, Alumno> alumnos) {		
+	public Curso(String nombre, String descripcion) {		
 		this.codCur = cont;
 		this.nombre = nombre;
-		this.descripcion = descripcion;
-		this.alumnos = alumnos;
+		this.descripcion = descripcion;		
 		cont++;
 	}
 
