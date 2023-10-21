@@ -11,24 +11,19 @@ public class Alumno {
 	private HashMap<Integer, Curso> cursos;
 
 	/**
-	 * @param numExpediente
 	 * @param nombre
 	 * @param apellidos
 	 * @param telefono
 	 * @param direccion
 	 * @param fechNac
-	 * @param cursos
 	 */
-	public Alumno(int numExpediente, String nombre, String apellidos, String telefono, String direccion, Date fechNac,
-			HashMap<Integer, Curso> cursos) {
-		
-		this.numExpediente = numExpediente;
+	public Alumno(String nombre, String apellidos, String telefono, String direccion, Date fechNac) {		
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.telefono = telefono;
 		this.direccion = direccion;
 		this.fechNac = fechNac;
-		this.cursos = cursos;
+		
 	}
 
 	public int getNumExpediente() {
