@@ -1,6 +1,6 @@
 
 public interface CRUD {
-	void alta();
+    void alta();
 	void baja();
 	void modificar();
 	void buscar();

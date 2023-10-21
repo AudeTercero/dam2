@@ -2,7 +2,7 @@ import java.sql.Date;
 import java.util.HashMap;
 import java.util.Scanner;
 
-public class GestionAlumnos {
+public class GestionAlumnos implements CRUD{
 	private HashMap<Integer, Alumno> alumnos = new HashMap<>();
 	private String fichero = "Alumnos.bin";
 	private Scanner sc = new Scanner(System.in);
@@ -30,7 +30,7 @@ public class GestionAlumnos {
 				modificar();
 				break;
 			case "4":
-				consulta();
+				buscar();
 				break;
 			case "5":
 				mostrar();
@@ -48,7 +48,7 @@ public class GestionAlumnos {
 		} while (!op.equalsIgnoreCase("0"));
 	}
 
-	public static void alta() {
+	public void alta() {
 		Scanner sc = new Scanner(System.in);
 		int cont = 0;
 		boolean fallo = false;
@@ -65,7 +65,7 @@ public class GestionAlumnos {
 				verif.hayAlgo(nom);
 				
 			} catch (MisExceptions e) {
-				e.printStackTrace();
+				System.out.println(e);
 				fallo = true;
 				cont++;
 			}
@@ -81,7 +81,7 @@ public class GestionAlumnos {
 					verif.hayAlgo(ape);
 					
 				} catch (MisExceptions e) {
-					e.printStackTrace();
+					System.out.println(e);
 					fallo = true;
 					cont++;
 				}
@@ -98,7 +98,7 @@ public class GestionAlumnos {
 						verif.esNum(tel);
 						
 					} catch (MisExceptions e) {
-						e.printStackTrace();
+						System.out.println(e);
 						fallo = true;
 						cont++;
 					}
@@ -114,7 +114,7 @@ public class GestionAlumnos {
 							verif.hayAlgo(dir);
 							
 						} catch (MisExceptions e) {
-							e.printStackTrace();
+							System.out.println(e);
 							fallo = true;
 							cont++;
 						}
@@ -130,7 +130,7 @@ public class GestionAlumnos {
 								verif.hayAlgo(fech);
 
 							} catch (MisExceptions e) {
-								e.printStackTrace();
+								System.out.println(e);
 								fallo = true;
 								cont++;
 							}
@@ -152,26 +152,28 @@ public class GestionAlumnos {
 		} else {
 			System.out.println("Has llegado a 5 intentos, saliendo...");
 		}
+		
+		
 
 	}
 
-	public static void baja() {
+	public void baja() {
 
 	}
 
-	public static void modificar() {
+	public void modificar() {
 
 	}
 
-	public static void consulta() {
+	public void buscar() {
 
 	}
 
-	public static void mostrar() {
+	public void mostrar() {
 
 	}
 
-	public static void inscribir() {
+	public void inscribir() {
 
 	}
 
