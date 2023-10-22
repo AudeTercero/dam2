@@ -20,7 +20,7 @@ public class Profesor implements Serializable {
 		this.nombre = nombre;
 		this.direccion = direccion;
 		this.telefono = telefono;
-		
+		this.cursos = new HashMap<>();
 	}
 
 	public String getDni() {

@@ -1,7 +1,20 @@
 import java.util.Scanner;
+
+import serializacion.ClassNotFoundException;
+import serializacion.FileNotFoundException;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.util.HashMap;
 
-public class GestionProfesores {
+public class GestionProfesores implements CRUD {
 	private HashMap<String, Curso> cursos = new HashMap<>();
 	private String fichero = "Profesores.bin";
 	private static Scanner sc = new Scanner(System.in);
@@ -28,7 +41,7 @@ public class GestionProfesores {
 				modificar();
 				break;
 			case "4":
-				consulta();
+				buscar();
 				break;
 			case "5":
 				mostrar();
@@ -43,13 +56,14 @@ public class GestionProfesores {
 		} while (!op.equalsIgnoreCase("0"));
 	}
 
-	public static void alta() {
+	public void alta() {
 		Profesor profe;
 		String dni, nombre, direccion, telefono;
 		int contError = 0;
 		boolean fallo = false;
 
 		do {// Inicio de do while que controla si hay fallo
+			System.out.println("Introduce el dni del Profesor:");
 			dni = sc.nextLine();
 			try {
 				verif.hayAlgo(dni);
@@ -64,6 +78,7 @@ public class GestionProfesores {
 			contError = 0;
 			fallo = false;
 			do {// Inicio de do while que controla si hay fallo
+				System.out.println("Introduce el nombre del Profesor:");
 				nombre = sc.nextLine();
 				try {
 					verif.hayAlgo(nombre);
@@ -78,6 +93,7 @@ public class GestionProfesores {
 				fallo = false;
 				contError = 0;
 				do {// Inicio de do while que controla si hay fallo
+					System.out.println("Introduce la direccion del Profesor:");
 					direccion = sc.nextLine();
 					try {
 						verif.hayAlgo(direccion);
@@ -92,6 +108,7 @@ public class GestionProfesores {
 					fallo = false;
 					contError = 0;
 					do {// Inicio de do while que controla si hay fallo
+						System.out.println("Introduce el telefono del Profesor:");
 						telefono = sc.nextLine();
 						try {
 							verif.esNum(telefono);
@@ -106,38 +123,81 @@ public class GestionProfesores {
 					if (contError != 5) {
 						
 						profe = new Profesor(dni, nombre, direccion, telefono);
+						File fichProf = new File("Profesores.ser");
+						ObjectOutputStream out = null;
+						try {
+							out  = new ObjectOutputStream (new BufferedOutputStream(new FileOutputStream (fichProf)));
+							out.writeObject(profe);							
+						}catch(IOException e) {
+							e.printStackTrace();
+							System.out.println("Error al guardar Profesor");
+						} finally {
+							try {
+								out.close();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+						}
 						
 					} else {
-						// msg ERROR
+						System.out.println("Se han superado el maximo de errores permitidos(5)");
 					}
 
 				} else {
-					// msg ERROR
+					System.out.println("Se han superado el maximo de errores permitidos(5)");
 				}
 
 			} else {
-				// msg ERROR
+				System.out.println("Se han superado el maximo de errores permitidos(5)");
 			}
 
 		} else {
-			// msg ERROR
+			System.out.println("Se han superado el maximo de errores permitidos(5)");
 		}
 
 	}
 
-	public static void baja() {
+	public void baja() {
 
 	}
 
-	public static void modificar() {
+	public void modificar() {
 
 	}
 
-	public static void consulta() {
+	public void buscar() {
 
 	}
 
-	public static void mostrar() {
+	public void mostrar() {
+		ObjectInputStream in = null;
+		try {
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Profesores.ser")));
+			while(true) {
+				Profesor profe = (Profesor) in.readObject();
+				System.out.println("****PROFESOR****");
+				System.out.println("Dni: "+profe.getDni());
+				System.out.println("Nombre: "+profe.getNombre());
+				System.out.println("Direccion: "+profe.getDireccion());
+				System.out.println("Telefono: "+profe.getTelefono());
+			}
+		} catch (EOFException e) {
+			
+			//e.printStackTrace();
+		} catch (IOException e) {
+			System.out.println("Error al mostrar Profesores");
+			e.printStackTrace();
+		} catch (ClassNotFoundException e) {
+			
+			e.printStackTrace();
+			System.out.println("Error al mostrar Profesores");
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 }
