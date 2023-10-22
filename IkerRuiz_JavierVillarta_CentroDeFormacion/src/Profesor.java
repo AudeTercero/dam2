@@ -62,6 +62,12 @@ public class Profesor implements Serializable {
 	public void setCursos(HashMap<Integer, Curso> cursos) {
 		this.cursos = cursos;
 	}
+	public void agregarCurso(Curso curso) {
+		this.cursos.put(null, curso);
+	}
+	public void eliminarCurso(String clave) {
+		this.cursos.remove(clave);
+	}
 
 	@Override
 	public String toString() {
