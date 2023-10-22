@@ -1,8 +1,7 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
 import java.util.Scanner;
 
-import serializacion.ClassNotFoundException;
-import serializacion.FileNotFoundException;
+
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
