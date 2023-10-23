@@ -1,7 +1,6 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
+
 import java.util.Scanner;
-
-
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -12,11 +11,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public class GestionProfesores implements CRUD {
 	private HashMap<String, Curso> cursos = new HashMap<>();
-	private String fichero = "Profesores.bin";
+	private static final String FICHERO = "Profesores.bin";
 	private static Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
 
@@ -77,7 +77,7 @@ public class GestionProfesores implements CRUD {
 
 		if (contError < 5) {
 			contError = 0;
-		
+
 			do {// Inicio de do while que controla si hay fallo
 				fallo = false;
 				System.out.println("Introduce el nombre del Profesor:");
@@ -92,7 +92,7 @@ public class GestionProfesores implements CRUD {
 			} while (fallo == true && contError != 5);// fin de do while que controla si hay fallo
 
 			if (contError < 5) {
-				
+
 				contError = 0;
 				do {// Inicio de do while que controla si hay fallo
 					fallo = false;
@@ -108,7 +108,7 @@ public class GestionProfesores implements CRUD {
 				} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
 
 				if (contError < 5) {
-					
+
 					contError = 0;
 					do {// Inicio de do while que controla si hay fallo
 						fallo = false;
@@ -125,24 +125,35 @@ public class GestionProfesores implements CRUD {
 					} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
 
 					if (contError != 5) {
-						
+
 						profe = new Profesor(dni, nombre, direccion, telefono);
-						File fichProf = new File("Profesores.ser");
+						File fichProf = new File(FICHERO);
+						leerFich();
 						ObjectOutputStream out = null;
+						
+					
+
 						try {
-							out  = new ObjectOutputStream (new BufferedOutputStream(new FileOutputStream (fichProf)));
-							out.writeObject(profe);							
-						}catch(IOException e) {
+							out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichProf)));
+							//if (!profesores.isEmpty()) {
+							//	for (Profesor p : profesores) {
+							//		out.writeObject(p);
+							//	}
+							//}
+							out.writeObject(profe);
+
+						} catch (IOException e) {
 							e.printStackTrace();
 							System.out.println("Error al guardar Profesor");
 						} finally {
 							try {
 								out.close();
+
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 						}
-						
+
 					} else {
 						System.out.println("Se han superado el maximo de errores permitidos(5)");
 					}
@@ -177,22 +188,22 @@ public class GestionProfesores implements CRUD {
 		ObjectInputStream in = null;
 		try {
 			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Profesores.ser")));
-			while(true) {
+			while (true) {
 				Profesor profe = (Profesor) in.readObject();
 				System.out.println("****PROFESOR****");
-				System.out.println("Dni: "+profe.getDni());
-				System.out.println("Nombre: "+profe.getNombre());
-				System.out.println("Direccion: "+profe.getDireccion());
-				System.out.println("Telefono: "+profe.getTelefono());
+				System.out.println("Dni: " + profe.getDni());
+				System.out.println("Nombre: " + profe.getNombre());
+				System.out.println("Direccion: " + profe.getDireccion());
+				System.out.println("Telefono: " + profe.getTelefono());
 			}
 		} catch (EOFException e) {
-			
-			//e.printStackTrace();
+
+			// e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Error al mostrar Profesores");
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
-			
+
 			e.printStackTrace();
 			System.out.println("Error al mostrar Profesores");
 		} finally {
@@ -203,5 +214,28 @@ public class GestionProfesores implements CRUD {
 			}
 		}
 
+	}
+
+	public ArrayList<Profesor> leerFich() {
+		File fichProf = new File(FICHERO);
+		ObjectInputStream in = null;
+		ArrayList<Profesor> profesores = new ArrayList<>();
+
+		try {
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichProf)));
+			while (true) {
+				profesores.add((Profesor) in.readObject());
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return profesores;
 	}
 }
