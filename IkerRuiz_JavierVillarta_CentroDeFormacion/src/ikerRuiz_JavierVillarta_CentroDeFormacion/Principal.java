@@ -2,7 +2,9 @@ package ikerRuiz_JavierVillarta_CentroDeFormacion;
 import java.util.Scanner;
 
 public class Principal {
+	
 	public static void main(String[] args) {
+		
 		System.out.println("-------------------------");
 		System.out.println("-- CENTRO DE FORMACION --\n");
 		
@@ -41,6 +43,6 @@ public class Principal {
 
 		System.out.println("Fin Centro de Formacion");
 		System.out.println("---------------------");
-
+		
 	}
 }

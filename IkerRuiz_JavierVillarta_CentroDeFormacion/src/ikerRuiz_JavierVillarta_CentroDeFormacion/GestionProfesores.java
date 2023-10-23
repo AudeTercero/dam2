@@ -77,7 +77,7 @@ public class GestionProfesores implements CRUD {
 
 		if (contError < 5) {
 			contError = 0;
-
+		
 			do {// Inicio de do while que controla si hay fallo
 				fallo = false;
 				System.out.println("Introduce el nombre del Profesor:");
@@ -92,7 +92,7 @@ public class GestionProfesores implements CRUD {
 			} while (fallo == true && contError != 5);// fin de do while que controla si hay fallo
 
 			if (contError < 5) {
-
+				
 				contError = 0;
 				do {// Inicio de do while que controla si hay fallo
 					fallo = false;
@@ -108,7 +108,7 @@ public class GestionProfesores implements CRUD {
 				} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
 
 				if (contError < 5) {
-
+					
 					contError = 0;
 					do {// Inicio de do while que controla si hay fallo
 						fallo = false;
@@ -125,35 +125,36 @@ public class GestionProfesores implements CRUD {
 					} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
 
 					if (contError != 5) {
-
+						
 						profe = new Profesor(dni, nombre, direccion, telefono);
 						File fichProf = new File(FICHERO);
-						leerFich();
-						ObjectOutputStream out = null;
+						ObjectOutputStream out = null;	
+						ArrayList<Profesor>profesores  =new ArrayList();
+						profesores = leerFich();
 						
-					
-
 						try {
-							out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichProf)));
-							//if (!profesores.isEmpty()) {
-							//	for (Profesor p : profesores) {
-							//		out.writeObject(p);
-							//	}
-							//}
+							out  = new ObjectOutputStream (new BufferedOutputStream(new FileOutputStream (fichProf)));
+							if(!profesores.isEmpty()) {
+								for(Profesor p : profesores) {
+									out.writeObject(p);
+								}
+							}
 							out.writeObject(profe);
-
-						} catch (IOException e) {
+							
+							
+												
+						}catch(IOException  e) {
 							e.printStackTrace();
 							System.out.println("Error al guardar Profesor");
 						} finally {
 							try {
 								out.close();
-
+								
 							} catch (IOException e) {
 								e.printStackTrace();
 							}
 						}
-
+						
 					} else {
 						System.out.println("Se han superado el maximo de errores permitidos(5)");
 					}
