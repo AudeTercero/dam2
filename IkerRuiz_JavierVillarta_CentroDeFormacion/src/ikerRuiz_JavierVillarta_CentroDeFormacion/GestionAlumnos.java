@@ -1,14 +1,26 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
-import java.sql.Date;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Scanner;
 
-public class GestionAlumnos implements CRUD{
-	private HashMap<Integer, Alumno> alumnos = new HashMap<>();
+public class GestionAlumnos implements CRUD {
+	
 	private String fichero = "Alumnos.bin";
 	private Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
+	private static FicherosBinarios fb = new FicherosBinarios();
+	private static File file = new File("Alumnos.bin");
+	private HashMap<Integer, Alumno> alumnos = fb.leer(file);
 
+	/*
+	 * Metodo menu para seleccionar las acciones requeridas a ejecutar
+	 */
 	public void menu() {
 		System.out.println("-- GESTION ALUMNOS --");
 
@@ -49,13 +61,20 @@ public class GestionAlumnos implements CRUD{
 		} while (!op.equalsIgnoreCase("0"));
 	}
 
+	/*
+	 * Metodo para dar de alta alumnos. Recoje los diferentes atributos, los valida
+	 * y crea un objeto alumno que se guarda en un fichero
+	 */
 	public void alta() {
 		Scanner sc = new Scanner(System.in);
 		int cont = 0;
 		boolean fallo = false;
+		boolean repe = false;
 
-		String nom, ape, tel, dir, fech = null;
-		Date fechNac;
+		String nom, ape, tel, dir, fech;
+		Date fechNac = null;
+		;
+		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-mm-dd");
 
 		System.out.println("-ALTA ALUMNOS- \n");
 
@@ -64,7 +83,7 @@ public class GestionAlumnos implements CRUD{
 			nom = sc.nextLine();
 			try {
 				verif.hayAlgo(nom);
-				
+
 			} catch (MisExceptions e) {
 				System.out.println(e);
 				fallo = true;
@@ -80,7 +99,7 @@ public class GestionAlumnos implements CRUD{
 				ape = sc.nextLine();
 				try {
 					verif.hayAlgo(ape);
-					
+
 				} catch (MisExceptions e) {
 					System.out.println(e);
 					fallo = true;
@@ -97,7 +116,7 @@ public class GestionAlumnos implements CRUD{
 						verif.hayAlgo(tel);
 						verif.nueveCaracteres(tel);
 						verif.esNum(tel);
-						
+
 					} catch (MisExceptions e) {
 						System.out.println(e);
 						fallo = true;
@@ -113,7 +132,7 @@ public class GestionAlumnos implements CRUD{
 						dir = sc.nextLine();
 						try {
 							verif.hayAlgo(dir);
-							
+
 						} catch (MisExceptions e) {
 							System.out.println(e);
 							fallo = true;
@@ -121,6 +140,7 @@ public class GestionAlumnos implements CRUD{
 						}
 
 					} while (fallo && cont < 5);
+
 					if (cont < 5) {
 						cont = 0;
 						do {
@@ -129,6 +149,7 @@ public class GestionAlumnos implements CRUD{
 							fech = sc.nextLine();
 							try {
 								verif.hayAlgo(fech);
+								verif.esFech(fech);
 
 							} catch (MisExceptions e) {
 								System.out.println(e);
@@ -137,8 +158,37 @@ public class GestionAlumnos implements CRUD{
 							}
 
 						} while (fallo && cont < 5);
-						
-					}else {
+
+						if (cont < 5) {
+							cont = 0;
+							try {
+								fechNac = formatoFecha.parse(fech);
+							} catch (ParseException e) {
+								e.printStackTrace();
+							}
+
+							//Iteramos hashmap alumnos para ver si ya existe el alumno a introducir
+							for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
+					            Alumno a = entry.getValue();
+					            if(nom == a.getNombre() && ape == a.getApellidos()) {
+					            	repe = true;
+					            	System.out.println("Alumno ya existente");
+					            }					            
+					        }
+							
+							//Si el alumno no esta repetido, lo creamos y lo guardamos
+							if(repe == false) {
+								Alumno alumno = new Alumno (nom, ape, tel, dir, fechNac);
+								alumnos.put(alumno.getNumExpediente(), alumno);
+								
+								fb.guardar(alumno);
+							}
+
+						} else {
+							System.out.println("Has llegado a 5 intentos, saliendo...");
+						}
+
+					} else {
 						System.out.println("Has llegado a 5 intentos, saliendo...");
 					}
 
@@ -154,7 +204,7 @@ public class GestionAlumnos implements CRUD{
 			System.out.println("Has llegado a 5 intentos, saliendo...");
 		}
 		
-		
+		sc.close();// cerramos el escanner
 
 	}
 

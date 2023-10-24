@@ -1,6 +1,9 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
+import java.io.File;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+
 
 public class Alumno {
 	private int numExpediente;
@@ -10,6 +13,8 @@ public class Alumno {
 	private String direccion;
 	private Date fechNac;
 	private HashMap<Integer, Curso> cursos;
+	private File file = new File("Alumnos.bin");
+	private FicherosBinarios fb = new FicherosBinarios();
 
 	/**
 	 * @param nombre
@@ -24,7 +29,32 @@ public class Alumno {
 		this.telefono = telefono;
 		this.direccion = direccion;
 		this.fechNac = fechNac;
+		this.numExpediente = nuevoExpediente(file);
 		
+	}
+	
+	public Alumno(int expe, String nombre, String apellidos, String telefono, String direccion, Date fechNac) {		
+		this.numExpediente = expe;
+		this.nombre = nombre;
+		this.apellidos = apellidos;
+		this.telefono = telefono;
+		this.direccion = direccion;
+		this.fechNac = fechNac;		
+		
+	}
+	
+	public int nuevoExpediente(File file) {
+		int aux = 0;
+		
+		HashMap<Integer, Alumno> alumnos = fb.leer(file);
+		for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
+            Alumno a = entry.getValue();
+            
+            if(a.getNumExpediente() > aux) {
+            	aux = a.getNumExpediente();
+            }					            
+        }
+		return aux;
 	}
 
 	public int getNumExpediente() {
