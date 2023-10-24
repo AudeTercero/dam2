@@ -143,11 +143,7 @@ public class GestionProfesores implements CRUD {
 			System.out.println("Se han superado el maximo de errores permitidos(5)");
 		}
 
-	}else
-
-	{
-		System.out.println("Se han superado el maximo de errores permitidos(5)");
-	}
+	
 
 	}
 
@@ -223,6 +219,7 @@ public class GestionProfesores implements CRUD {
 		BufferedOutputStream bufOut = null;
 		ObjectOutputStream out = null;
 		ArrayList<Profesor> listProfe = new ArrayList<>();
+		boolean existe = false;
 		try {
 			if (leerFich() != null) {
 				listProfe = leerFich();
@@ -230,9 +227,17 @@ public class GestionProfesores implements CRUD {
 			fileOut = new FileOutputStream(FICHERO);
 			bufOut = new BufferedOutputStream(fileOut);
 			out = new ObjectOutputStream(bufOut);
-			out.writeObject(profe);
-			for (Profesor e : listProfe) {
-				out.writeObject(e);
+			
+			for (Profesor p : listProfe) {
+				out.writeObject(p);
+				if(p.getDni().equalsIgnoreCase(profe.getDni())) {
+					existe = true;
+				}
+			}
+			if(!existe) {
+				out.writeObject(profe);
+			}else {
+				System.out.println("Ese profesor ya existe. No puede haber dos Profesores con el mismo dni.");
 			}
 		} catch (IOException ex) {
 //	            ex.printStackTrace();
