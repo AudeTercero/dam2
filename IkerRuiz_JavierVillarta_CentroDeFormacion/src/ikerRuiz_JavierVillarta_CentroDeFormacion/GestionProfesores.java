@@ -13,10 +13,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class GestionProfesores implements CRUD {
 	private HashMap<String, Curso> cursos = new HashMap<>();
-	private static final String FICHERO = "Profesores.bin";
+	private static final String FICHERO = "Profesores.ser";
 	private static Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
 
@@ -77,7 +78,7 @@ public class GestionProfesores implements CRUD {
 
 		if (contError < 5) {
 			contError = 0;
-		
+
 			do {// Inicio de do while que controla si hay fallo
 				fallo = false;
 				System.out.println("Introduce el nombre del Profesor:");
@@ -92,7 +93,7 @@ public class GestionProfesores implements CRUD {
 			} while (fallo == true && contError != 5);// fin de do while que controla si hay fallo
 
 			if (contError < 5) {
-				
+
 				contError = 0;
 				do {// Inicio de do while que controla si hay fallo
 					fallo = false;
@@ -108,7 +109,7 @@ public class GestionProfesores implements CRUD {
 				} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
 
 				if (contError < 5) {
-					
+
 					contError = 0;
 					do {// Inicio de do while que controla si hay fallo
 						fallo = false;
@@ -125,38 +126,9 @@ public class GestionProfesores implements CRUD {
 					} while (fallo == true && contError != 5);// Fin de do while que controla si hay fallo
 
 					if (contError != 5) {
-						
+
 						profe = new Profesor(dni, nombre, direccion, telefono);
-						File fichProf = new File(FICHERO);
-						ObjectOutputStream out = null;	
-						ArrayList<Profesor>profesores  =new ArrayList();
-						profesores = leerFich();
-						
-						try {
-							out  = new ObjectOutputStream (new BufferedOutputStream(new FileOutputStream (fichProf)));
-							if(!profesores.isEmpty()) {
-								for(Profesor p : profesores) {
-									out.writeObject(p);
-								}
-							}
-							out.writeObject(profe);
-							
-							
-												
-						}catch(IOException  e) {
-							e.printStackTrace();
-							System.out.println("Error al guardar Profesor");
-						} finally {
-							try {
-								out.close();
-								
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-						}
-						
-					} else {
-						System.out.println("Se han superado el maximo de errores permitidos(5)");
+						guardarFich(profe);
 					}
 
 				} else {
@@ -170,6 +142,12 @@ public class GestionProfesores implements CRUD {
 		} else {
 			System.out.println("Se han superado el maximo de errores permitidos(5)");
 		}
+
+	}else
+
+	{
+		System.out.println("Se han superado el maximo de errores permitidos(5)");
+	}
 
 	}
 
@@ -188,7 +166,7 @@ public class GestionProfesores implements CRUD {
 	public void mostrar() {
 		ObjectInputStream in = null;
 		try {
-			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream("Profesores.ser")));
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
 			while (true) {
 				Profesor profe = (Profesor) in.readObject();
 				System.out.println("****PROFESOR****");
@@ -199,7 +177,7 @@ public class GestionProfesores implements CRUD {
 			}
 		} catch (EOFException e) {
 
-			// e.printStackTrace();
+			e.printStackTrace();
 		} catch (IOException e) {
 			System.out.println("Error al mostrar Profesores");
 			e.printStackTrace();
@@ -218,12 +196,12 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public ArrayList<Profesor> leerFich() {
-		File fichProf = new File(FICHERO);
+
 		ObjectInputStream in = null;
 		ArrayList<Profesor> profesores = new ArrayList<>();
 
 		try {
-			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichProf)));
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
 			while (true) {
 				profesores.add((Profesor) in.readObject());
 			}
@@ -238,5 +216,34 @@ public class GestionProfesores implements CRUD {
 		}
 
 		return profesores;
+	}
+
+	public void guardarFich(Profesor profe) {
+		FileOutputStream fileOut = null;
+		BufferedOutputStream bufOut = null;
+		ObjectOutputStream out = null;
+		ArrayList<Profesor> listProfe = new ArrayList<>();
+		try {
+			if (leerFich() != null) {
+				listProfe = leerFich();
+			}
+			fileOut = new FileOutputStream(FICHERO);
+			bufOut = new BufferedOutputStream(fileOut);
+			out = new ObjectOutputStream(bufOut);
+			out.writeObject(profe);
+			for (Profesor e : listProfe) {
+				out.writeObject(e);
+			}
+		} catch (IOException ex) {
+//	            ex.printStackTrace();
+		} finally {
+			try {
+				out.close();
+				bufOut.close();
+				fileOut.close();
+			} catch (Exception ex) {
+				// ex.printStackTrace();
+			}
+		}
 	}
 }
