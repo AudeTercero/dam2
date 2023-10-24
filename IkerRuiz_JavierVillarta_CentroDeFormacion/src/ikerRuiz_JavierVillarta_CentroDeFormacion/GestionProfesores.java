@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 
 public class GestionProfesores implements CRUD {
-	private HashMap<String, Curso> cursos = new HashMap<>();
 	private static final String FICHERO = "Profesores.ser";
 	private static Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
