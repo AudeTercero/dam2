@@ -36,28 +36,28 @@ public class Verificaciones {
 		string.trim(); // Eliminamos espacios de los laterales
 		String partes[] = string.split("-");// Separamos los anios, meses y dias
 
-		if (partes.length < 3) {// Comprobamos que solo hay tres partes en el split
+		if (partes.length == 3) {// Comprobamos que solo hay tres partes en el split
 
 			if (partes[0].length() != 4) {// Comprobamos si el primer puesto corresponde al anio si tiene una longitud igual a 4
-				throw new MisExceptions("Introduce una fecha valida");
+				throw new MisExceptions("1Introduce una fecha valida");
 
-			} else if (partes[0].length() > 2) {//Comprobamos si el segundo puesto tiene una longitud mayor a 2
-				throw new MisExceptions("Introduce una fecha valida");
+			} else if (partes[1].length() > 2) {//Comprobamos si el segundo puesto tiene una longitud mayor a 2
+				throw new MisExceptions("2Introduce una fecha valida");
 
-			} else if (partes[0].length() > 2) {//Comprobamos si el tercer puesto tiene una longitud mayor a 2
-				throw new MisExceptions("Introduce una fecha valida");
+			} else if (partes[2].length() > 2) {//Comprobamos si el tercer puesto tiene una longitud mayor a 2
+				throw new MisExceptions("3Introduce una fecha valida");
 
 			} else { //Iteramos cada parte y comprobamos que todos los valores sean numericoss
 				for (int i = 0; i < partes.length; i++) {
 					for (char c : partes[i].toCharArray()) {
 						if (!Character.isDigit(c)) {
-							throw new MisExceptions("Introduce una fecha valida");
+							throw new MisExceptions("4Introduce una fecha valida");
 						}
 					}
 				}
 			}
 		} else {
-			throw new MisExceptions("Introduce una fecha valida");
+			throw new MisExceptions("5Introduce una fecha valida");
 
 		}
 

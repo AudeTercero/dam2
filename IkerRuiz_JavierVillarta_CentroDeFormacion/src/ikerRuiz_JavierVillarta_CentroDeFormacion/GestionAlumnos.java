@@ -10,13 +10,13 @@ import java.util.Map;
 import java.util.Scanner;
 
 public class GestionAlumnos implements CRUD {
-	
+
 	private String fichero = "Alumnos.bin";
 	private Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
 	private static FicherosBinarios fb = new FicherosBinarios();
 	private static File file = new File("Alumnos.bin");
-	private HashMap<Integer, Alumno> alumnos = fb.leer(file);
+	private static HashMap<Integer, Alumno> alumnos = fb.leer(file);
 
 	/*
 	 * Metodo menu para seleccionar las acciones requeridas a ejecutar
@@ -79,6 +79,7 @@ public class GestionAlumnos implements CRUD {
 		System.out.println("-ALTA ALUMNOS- \n");
 
 		do {
+			fallo = false;
 			System.out.println("Introduce el nombre del alumno:");
 			nom = sc.nextLine();
 			try {
@@ -95,6 +96,7 @@ public class GestionAlumnos implements CRUD {
 		if (cont < 5) {
 			cont = 0;
 			do {
+				fallo = false;
 				System.out.println("Introduce el apellido del alumno:");
 				ape = sc.nextLine();
 				try {
@@ -110,6 +112,7 @@ public class GestionAlumnos implements CRUD {
 
 			if (cont < 5) {
 				do {
+					fallo = false;
 					System.out.println("Introduce el telefono del alumno:");
 					tel = sc.nextLine();
 					try {
@@ -128,6 +131,7 @@ public class GestionAlumnos implements CRUD {
 				if (cont < 5) {
 					cont = 0;
 					do {
+						fallo = false;
 						System.out.println("Introduce la direccion del alumno:");
 						dir = sc.nextLine();
 						try {
@@ -144,6 +148,7 @@ public class GestionAlumnos implements CRUD {
 					if (cont < 5) {
 						cont = 0;
 						do {
+							fallo = false;
 							System.out.println(
 									"Introduce la fecha de nacimiento del alumno, por favor ingresa la fecha (en formato YYYY-MM-DD):");
 							fech = sc.nextLine();
@@ -167,23 +172,30 @@ public class GestionAlumnos implements CRUD {
 								e.printStackTrace();
 							}
 
-							//Iteramos hashmap alumnos para ver si ya existe el alumno a introducir
-							for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
-					            Alumno a = entry.getValue();
-					            if(nom == a.getNombre() && ape == a.getApellidos()) {
-					            	repe = true;
-					            	System.out.println("Alumno ya existente");
-					            }					            
-					        }
-							
-							//Si el alumno no esta repetido, lo creamos y lo guardamos
-							if(repe == false) {
-								Alumno alumno = new Alumno (nom, ape, tel, dir, fechNac);
-								alumnos.put(alumno.getNumExpediente(), alumno);
+							if (!alumnos.isEmpty()) {//Si el hashmap no esta vacio buscaremos el alumno
 								
-								fb.guardar(alumno);
-							}
+								// Iteramos hashmap alumnos para ver si ya existe el alumno a introducir
+								for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
+									Alumno a = entry.getValue();
+									if (nom == a.getNombre() && ape == a.getApellidos()) {
+										repe = true;
+										System.out.println("Alumno ya existente");
+									}
+								}
 
+								// Si el alumno no esta repetido, lo creamos y lo guardamos
+								if (repe == false) {
+									Alumno alumno = new Alumno(nom, ape, tel, dir, fechNac);
+									alumnos.put(alumno.getNumExpediente(), alumno);
+
+									fb.guardar(alumno, file);
+								}
+							}else {//Si el hashmap esta vacio guardaremos directamente
+								Alumno alumno = new Alumno(nom, ape, tel, dir, fechNac);
+								alumnos.put(alumno.getNumExpediente(), alumno);
+
+								fb.guardar2(alumno, file);
+							}
 						} else {
 							System.out.println("Has llegado a 5 intentos, saliendo...");
 						}
@@ -203,8 +215,8 @@ public class GestionAlumnos implements CRUD {
 		} else {
 			System.out.println("Has llegado a 5 intentos, saliendo...");
 		}
+
 		
-		sc.close();// cerramos el escanner
 
 	}
 

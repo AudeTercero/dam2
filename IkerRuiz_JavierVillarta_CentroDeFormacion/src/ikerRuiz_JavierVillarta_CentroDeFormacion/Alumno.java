@@ -1,11 +1,12 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
+
 import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-
-public class Alumno {
+public class Alumno  {
 	private int numExpediente;
 	private String nombre;
 	private String apellidos;
@@ -23,38 +24,42 @@ public class Alumno {
 	 * @param direccion
 	 * @param fechNac
 	 */
-	public Alumno(String nombre, String apellidos, String telefono, String direccion, Date fechNac) {		
+	public Alumno(String nombre, String apellidos, String telefono, String direccion, Date fechNac) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.telefono = telefono;
 		this.direccion = direccion;
 		this.fechNac = fechNac;
 		this.numExpediente = nuevoExpediente(file);
-		
+
 	}
-	
-	public Alumno(int expe, String nombre, String apellidos, String telefono, String direccion, Date fechNac) {		
+
+	public Alumno(int expe, String nombre, String apellidos, String telefono, String direccion, Date fechNac) {
 		this.numExpediente = expe;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.telefono = telefono;
 		this.direccion = direccion;
-		this.fechNac = fechNac;		
-		
+		this.fechNac = fechNac;
+
 	}
-	
+
 	public int nuevoExpediente(File file) {
 		int aux = 0;
-		
-		HashMap<Integer, Alumno> alumnos = fb.leer(file);
-		for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
-            Alumno a = entry.getValue();
-            
-            if(a.getNumExpediente() > aux) {
-            	aux = a.getNumExpediente();
-            }					            
-        }
+		if (file.length() != 0) {
+			HashMap<Integer, Alumno> alumnos = fb.leer(file);
+			for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
+				Alumno a = entry.getValue();
+
+				if (a.getNumExpediente() > aux) {
+					aux = a.getNumExpediente();
+				}
+			}
+		}else {
+			aux = 1;
+		}
 		return aux;
+
 	}
 
 	public int getNumExpediente() {
@@ -114,12 +119,10 @@ public class Alumno {
 	}
 
 	@Override
-	public String toString() { //Fallara por el hashmap 100%
+	public String toString() { // Fallara por el hashmap 100%
 		return "Alumno [numExpediente=" + numExpediente + ", nombre=" + nombre + ", apellidos=" + apellidos
 				+ ", telefono=" + telefono + ", direccion=" + direccion + ", fechNac=" + fechNac + ", cursos=" + cursos
 				+ "]";
 	}
-	
-	
 
 }
