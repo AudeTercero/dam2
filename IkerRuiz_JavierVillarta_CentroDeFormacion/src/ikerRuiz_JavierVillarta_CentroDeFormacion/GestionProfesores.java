@@ -148,11 +148,10 @@ public class GestionProfesores implements CRUD {
 
 	public void baja() {
 		System.out.println("Introduce el dni del Profesor que quiera dar de baja");
-		String temp = "temp.ser";
+		
 		String dni  = sc.nextLine();
 		ArrayList <Profesor> profesores = leerFich();
-		ObjectOutputStream out = null;
-		File profSer = new File(FICHERO);
+		ObjectOutputStream out = null;		
 		for(Profesor p: profesores) {
 			if(dni.equalsIgnoreCase(p.getDni())) {
 				profesores.remove(p);
@@ -173,18 +172,13 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public void modificar() {
-		System.out.println("Introduce el dni del profesor");
+		System.out.println("Introduce el dni del profesor a modificar");
 		String dni  = sc.nextLine();
-		ObjectInputStream in = null;
+		ObjectOutputStream out = null;
 		Profesor profe;
 		try {
-			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
-			while(true) {
-				profe = (Profesor)in.readObject();
-				if(dni.equalsIgnoreCase(profe.getDni())) {
-					
-				}
-			}
+			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO)));
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
