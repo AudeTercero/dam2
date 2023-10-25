@@ -148,15 +148,64 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public void baja() {
-
+		System.out.println("Introduce el dni del Profesor");
+		String dni  = sc.nextLine();
+		ObjectInputStream in = null;
+		Profesor profe;
+		try {
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
+			while(true) {
+				profe = (Profesor)in.readObject();
+				if(dni.equalsIgnoreCase(profe.getDni())) {
+					
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void modificar() {
-
+		System.out.println("Introduce el dni del profesor");
+		String dni  = sc.nextLine();
+		ObjectInputStream in = null;
+		Profesor profe;
+		try {
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
+			while(true) {
+				profe = (Profesor)in.readObject();
+				if(dni.equalsIgnoreCase(profe.getDni())) {
+					
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void buscar() {
-
+		System.out.println("Introduce el dni del profesor");
+		String dni  = sc.nextLine();
+		ObjectInputStream in = null;
+		Profesor profe;
+		try {
+			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
+			while(true) {
+				profe = (Profesor)in.readObject();
+				if(dni.equalsIgnoreCase(profe.getDni())) {
+					System.out.println("****PROFESOR****");
+					System.out.println("Dni: " + profe.getDni());
+					System.out.println("Nombre: " + profe.getNombre());
+					System.out.println("Direccion: " + profe.getDireccion());
+					System.out.println("Telefono: " + profe.getTelefono());
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void mostrar() {
