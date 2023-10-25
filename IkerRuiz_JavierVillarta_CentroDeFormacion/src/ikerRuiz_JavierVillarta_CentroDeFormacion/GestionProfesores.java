@@ -147,18 +147,25 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public void baja() {
-		System.out.println("Introduce el dni del Profesor");
+		System.out.println("Introduce el dni del Profesor que quiera dar de baja");
+		String temp = "temp.ser";
 		String dni  = sc.nextLine();
-		ObjectInputStream in = null;
-		Profesor profe;
-		try {
-			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
-			while(true) {
-				profe = (Profesor)in.readObject();
-				if(dni.equalsIgnoreCase(profe.getDni())) {
-					
-				}
+		ArrayList <Profesor> profesores = leerFich();
+		ObjectOutputStream out = null;
+		File profSer = new File(FICHERO);
+		for(Profesor p: profesores) {
+			if(dni.equalsIgnoreCase(p.getDni())) {
+				profesores.remove(p);
 			}
+			
+		} 
+		try {
+			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO)));
+			for(Profesor p: profesores) {
+				out.writeObject(p);
+			}	
+			
+			
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
