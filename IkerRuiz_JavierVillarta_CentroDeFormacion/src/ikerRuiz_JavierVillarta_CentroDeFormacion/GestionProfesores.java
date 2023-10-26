@@ -145,26 +145,28 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public void baja() {
+		File fichero = new File(FICHERO);
 		System.out.println("Introduce el dni del Profesor que quiera dar de baja");
-
 		String dni = sc.nextLine();
+		
 		ArrayList<Profesor> profesores = leerFich();
 		ObjectOutputStream out = null;
-		
+
 		try {
-			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO)));
+			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero)));
 			for (Profesor p : profesores) {
-				if(!dni.equalsIgnoreCase(p.getDni())) {
+				if (!dni.equalsIgnoreCase(p.getDni())) {
 					out.writeObject(p);
+					
 				}
 			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
-		}finally {
+		} finally {
 			try {
-			out.close();
-			}catch(IOException e) {
+				out.close();
+			} catch (IOException e) {
 				e.fillInStackTrace();
 			}
 		}
@@ -172,20 +174,45 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public void modificar() {
+		File fichero = new File(FICHERO);
 		System.out.println("Introduce el dni del profesor a modificar");
 		String dni = sc.nextLine();
+		
 		ObjectOutputStream out = null;
-		ArrayList <Profesor> profesores = leerFich();
-		for(Profesor p : profesores) {
-			if(dni.equalsIgnoreCase(p.getDni())) {
-				
+		ArrayList<Profesor> profesores = leerFich();
+		
+		Profesor profeAux = null;
+		if (!profesores.isEmpty()) {
+			for (Profesor p : profesores) {
+				if (dni.equalsIgnoreCase(p.getDni())) {
+					profeAux = p;
+					
+				}
 			}
+			profesores.remove(profeAux);
+			System.out.println("Introduce el nombre nuevo:");
+			String nombre = sc.nextLine();
+			
+			profeAux.setNombre(nombre);
+			
+			
+			profesores.add(profeAux);
+			
 		}
 		try {
-			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO)));
+			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero)));
+			for (Profesor p : profesores) {
+				out.writeObject(p);
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			try {
+				out.close();
+			}catch(Exception e) {
+				
+			}
 		}
 
 	}
@@ -214,33 +241,38 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public void mostrar() {
+		File fichero = new File(FICHERO);
 		ObjectInputStream in = null;
-		try {
-			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
-			while (true) {
-				Profesor profe = (Profesor) in.readObject();
-				System.out.println("****PROFESOR****");
-				System.out.println("Dni: " + profe.getDni());
-				System.out.println("Nombre: " + profe.getNombre());
-				System.out.println("Direccion: " + profe.getDireccion());
-				System.out.println("Telefono: " + profe.getTelefono());
-			}
-		} catch (EOFException e) {
-
-			e.printStackTrace();
-		} catch (IOException e) {
-			System.out.println("Error al mostrar Profesores");
-			e.printStackTrace();
-		} catch (ClassNotFoundException e) {
-
-			e.printStackTrace();
-			System.out.println("Error al mostrar Profesores");
-		} finally {
+		if (fichero.exists()) {
 			try {
-				in.close();
-			} catch (IOException e) {
+				in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)));
+				while (true) {
+					Profesor profe = (Profesor) in.readObject();
+					System.out.println("****PROFESOR****");
+					System.out.println("Dni: " + profe.getDni());
+					System.out.println("Nombre: " + profe.getNombre());
+					System.out.println("Direccion: " + profe.getDireccion());
+					System.out.println("Telefono: " + profe.getTelefono());
+				}
+			} catch (EOFException e) {
+
 				e.printStackTrace();
+			} catch (IOException e) {
+				System.out.println("Error al mostrar Profesores");
+				e.printStackTrace();
+			} catch (ClassNotFoundException e) {
+
+				e.printStackTrace();
+				System.out.println("Error al mostrar Profesores");
+			} finally {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 			}
+		}else {
+			System.out.println("El fichero no Existe");
 		}
 
 	}
@@ -251,7 +283,7 @@ public class GestionProfesores implements CRUD {
 		ArrayList<Profesor> profesores = new ArrayList<>();
 
 		try {
-			if (fichero.exists()) {//Comprobamos si existe
+			if (fichero.exists()) {// Comprobamos si existe
 				in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)));
 				while (true) {
 					profesores.add((Profesor) in.readObject());
@@ -261,10 +293,10 @@ public class GestionProfesores implements CRUD {
 			e.printStackTrace();
 		} finally {
 			try {
-				if(in !=null) {
+				if (in != null) {
 					in.close();
 				}
-				
+
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -280,7 +312,7 @@ public class GestionProfesores implements CRUD {
 		ObjectOutputStream out = null;
 		ArrayList<Profesor> listProfe = leerFich();
 		boolean existe = false;
-		try {			
+		try {
 			fileOut = new FileOutputStream(fichero);
 			bufOut = new BufferedOutputStream(fileOut);
 			out = new ObjectOutputStream(bufOut);
