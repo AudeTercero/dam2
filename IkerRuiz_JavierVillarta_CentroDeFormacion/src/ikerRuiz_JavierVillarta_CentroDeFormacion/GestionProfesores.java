@@ -176,7 +176,11 @@ public class GestionProfesores implements CRUD {
 		String dni = sc.nextLine();
 		ObjectOutputStream out = null;
 		ArrayList <Profesor> profesores = leerFich();
-		
+		for(Profesor p : profesores) {
+			if(dni.equalsIgnoreCase(p.getDni())) {
+				
+			}
+		}
 		try {
 			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO)));
 
@@ -247,7 +251,7 @@ public class GestionProfesores implements CRUD {
 		ArrayList<Profesor> profesores = new ArrayList<>();
 
 		try {
-			if (fichero.exists()) {
+			if (fichero.exists()) {//Comprobamos si existe
 				in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)));
 				while (true) {
 					profesores.add((Profesor) in.readObject());
