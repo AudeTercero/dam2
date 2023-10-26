@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class GestionAlumnos implements CRUD {
 
-	private static final String FICHERO = "Alumnos.data";
+	private static final String FICHERO = "Alumno.data";
 	private Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
 
@@ -216,6 +216,7 @@ public class GestionAlumnos implements CRUD {
 	 * Metodo para guardar los atributos de un objeto alumno en un fichero binario
 	 */
 	public void guardarFich(Alumno alumno) {
+		File file = new File(FICHERO);
 		DataOutputStream out = null;
 		ArrayList<Alumno> alumnos = leerFich();
 		boolean repe = false;
@@ -226,11 +227,12 @@ public class GestionAlumnos implements CRUD {
 				repe = true;
 			}
 		}
-		if (repe != true) {
+		if (!repe) {
+			
 			try {
-				out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO, true)));
+				out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file, true)));
 
-				out.write(alumno.getNumExpediente());
+				out.writeInt(alumno.getNumExpediente());
 				out.writeUTF(alumno.getNombre());
 				out.writeUTF(alumno.getApellidos());
 				out.writeUTF(alumno.getTelefono());

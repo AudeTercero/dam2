@@ -16,7 +16,7 @@ public class Alumno {
 	private String direccion;
 	private String fechNac;
 	private HashMap<Integer, Curso> cursos;
-	private String FICHERO = "Alumnos.data";;
+	private String FICHERO = "Alumno.data";;
 
 	/**
 	 * @param nombre
@@ -46,15 +46,15 @@ public class Alumno {
 	}
 
 	public int nuevoExpediente() {
-		File file = new File(FICHERO);
 		int aux = 0;
-		if (file.length() != 0) {
-			ArrayList<Alumno> alumnos = leerFich();
+		ArrayList<Alumno> alumnos = leerFich();
+		if (!alumnos.isEmpty()) {
 			for (Alumno a : alumnos) {
 				if (a.getNumExpediente() > aux) {
 					aux = a.getNumExpediente();
 				}
 			}
+			aux++;
 		} else {
 			aux = 1;
 		}
@@ -78,12 +78,11 @@ public class Alumno {
 					tel = in.readUTF();
 					dir = in.readUTF();
 					fech = in.readUTF();
-				}else {
+				} else {
 					break;
 				}
 
 				Alumno a = new Alumno(id, nom, ape, tel, dir, fech);
-
 				alumnos.add(a);
 
 			}
