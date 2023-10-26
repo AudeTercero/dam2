@@ -189,15 +189,143 @@ public class GestionAlumnos implements CRUD {
 	}
 
 	public void baja() {
+		System.out.println("Introduce el nombre del alumno");
+		String nom = sc.nextLine();
+		System.out.println("Introduce los apellidos del alumno");
+		String ape = sc.nextLine();
+		boolean existe = false;
+		boolean salir = false;
+		String op = null;
+		ArrayList<Alumno> alumnos = leerFich();
 
+		for (Alumno alumno : alumnos) {
+			if (alumno.getNombre().equalsIgnoreCase(nom) && alumno.getApellidos().equalsIgnoreCase(ape)) {
+				existe = true;
+				do {
+					System.out.println("Seguro que deseas borrar el alumno? \n [S/N]");
+					op = sc.nextLine();
+
+					if (op.equalsIgnoreCase("S")) {
+						alumnos.remove(alumno);
+						salir = true;
+					} else if ((op.equalsIgnoreCase("N"))) {
+						salir = true;
+					} else {
+						System.out.println("Entrada invalida");
+					}
+				} while (!salir);
+			}
+		}
+
+		if (!existe) {
+			System.out.println("El alumno no existe");
+		} else {
+			File file = new File(FICHERO);
+			DataOutputStream out = null;
+
+			try {
+				out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+				for (Alumno alumno : alumnos) {
+					out.writeInt(alumno.getNumExpediente());
+					out.writeUTF(alumno.getNombre());
+					out.writeUTF(alumno.getApellidos());
+					out.writeUTF(alumno.getTelefono());
+					out.writeUTF(alumno.getDireccion());
+					out.writeUTF(alumno.getFechNac().toString());
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
 	}
 
 	public void modificar() {
+		System.out.println("Introduce el nombre del alumno");
+		String nom = sc.nextLine();
+		System.out.println("Introduce los apellidos del alumno");
+		String ape = sc.nextLine();
+		boolean existe = false;
+		boolean salir = false;
+		String op = null;
+		ArrayList<Alumno> alumnos = leerFich();
 
+		if (alumnos.isEmpty()) {
+			for (Alumno alumno : alumnos) {
+				if (alumno.getNombre().equalsIgnoreCase(nom) && alumno.getApellidos().equalsIgnoreCase(ape)) {
+					existe = true;
+					do {
+						System.out.println("Introduce el valor que deseas modificar o pulsa 0 para salir \n"
+								+ "1.Nombre \n 2.Apellidos \n 3.Telefono \n 4.Direccion \n 5.");
+
+						System.out.println("Seguro que deseas modificar el alumno? \n [S/N]");
+						op = sc.nextLine();
+
+						if (op.equalsIgnoreCase("S")) {
+
+							salir = true;
+						} else if ((op.equalsIgnoreCase("N"))) {
+							salir = true;
+						} else {
+							System.out.println("Entrada invalida");
+						}
+					} while (!salir);
+				}
+			}
+
+			if (!existe) {
+				System.out.println("El alumno no existe");
+			} else {
+				File file = new File(FICHERO);
+				DataOutputStream out = null;
+
+				try {
+					out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file)));
+					for (Alumno alumno : alumnos) {
+						out.writeInt(alumno.getNumExpediente());
+						out.writeUTF(alumno.getNombre());
+						out.writeUTF(alumno.getApellidos());
+						out.writeUTF(alumno.getTelefono());
+						out.writeUTF(alumno.getDireccion());
+						out.writeUTF(alumno.getFechNac().toString());
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				} finally {
+					try {
+						out.close();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 
 	public void buscar() {
+		System.out.println("Introduce el nombre del alumno");
+		String nom = sc.nextLine();
+		System.out.println("Introduce los apellidos del alumno");
+		String ape = sc.nextLine();
+		boolean existe = false;
 
+		ArrayList<Alumno> alumnos = leerFich();
+
+		for (Alumno alumno : alumnos) {
+			if (alumno.getNombre().equalsIgnoreCase(nom) && alumno.getApellidos().equalsIgnoreCase(ape)) {
+				System.out.println(alumno.toString());
+				existe = true;
+			}
+		}
+
+		if (!existe) {
+			System.out.println("El alumno no existe");
+		}
 	}
 
 	public void mostrar() {
@@ -228,7 +356,7 @@ public class GestionAlumnos implements CRUD {
 			}
 		}
 		if (!repe) {
-			
+
 			try {
 				out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(file, true)));
 
@@ -259,7 +387,7 @@ public class GestionAlumnos implements CRUD {
 	 * recibidos de un fichero binario
 	 */
 	public ArrayList<Alumno> leerFich() {
-		
+
 		ArrayList<Alumno> alumnos = new ArrayList<>();
 		DataInputStream in = null;
 		int id = 0;
@@ -282,7 +410,7 @@ public class GestionAlumnos implements CRUD {
 						Alumno a = new Alumno(id, nom, ape, tel, dir, fech);
 
 						alumnos.add(a);
-					}else {
+					} else {
 						break;
 					}
 
