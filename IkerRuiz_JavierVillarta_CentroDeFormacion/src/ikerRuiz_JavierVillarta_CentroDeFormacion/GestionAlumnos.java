@@ -259,17 +259,18 @@ public class GestionAlumnos implements CRUD {
 	 * recibidos de un fichero binario
 	 */
 	public ArrayList<Alumno> leerFich() {
+		
 		ArrayList<Alumno> alumnos = new ArrayList<>();
 		DataInputStream in = null;
 		int id = 0;
 		String nom, ape, tel, dir, fech;
 		File file = new File(FICHERO);
 
-		if (file.length() != 0) {
+		if (file.exists()) {
 			try {
 				in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 				while (true) {
-					id = in.read();
+					id = in.readInt();
 					if (id != -1) {
 
 						nom = in.readUTF();
