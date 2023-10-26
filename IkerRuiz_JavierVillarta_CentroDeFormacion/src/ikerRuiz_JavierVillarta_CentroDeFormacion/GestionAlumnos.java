@@ -13,7 +13,7 @@ import java.util.Scanner;
 
 public class GestionAlumnos implements CRUD {
 
-	private static final String FICHERO = "Alumnos.bin";
+	private static final String FICHERO = "Alumnos.data";
 	private Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
 
@@ -204,7 +204,7 @@ public class GestionAlumnos implements CRUD {
 		ArrayList<Alumno> alumnos = leerFich();
 
 		for (Alumno a : alumnos) {
-			a.toString();
+			System.out.println(a.toString());
 		}
 	}
 
@@ -238,12 +238,12 @@ public class GestionAlumnos implements CRUD {
 				out.writeUTF(alumno.getFechNac().toString());
 
 			} catch (IOException e) {
-				// e.printStackTrace();
+				e.printStackTrace();
 			} finally {
 				try {
 					out.close();
 				} catch (IOException e) {
-					// e.printStackTrace();
+					e.printStackTrace();
 				}
 			}
 		} else {
@@ -265,19 +265,23 @@ public class GestionAlumnos implements CRUD {
 
 		if (file.length() != 0) {
 			try {
-				in = new DataInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
+				in = new DataInputStream(new BufferedInputStream(new FileInputStream(file)));
 				while (true) {
-					id = in.readInt();
-					nom = in.readUTF();
-					ape = in.readUTF();
-					tel = in.readUTF();
-					dir = in.readUTF();
-					fech = in.readUTF();
+					id = in.read();
+					if (id != -1) {
 
-					Alumno a = new Alumno(nom, ape, tel, dir, fech);
-					a.setNumExpediente(id);
+						nom = in.readUTF();
+						ape = in.readUTF();
+						tel = in.readUTF();
+						dir = in.readUTF();
+						fech = in.readUTF();
 
-					alumnos.add(a);
+						Alumno a = new Alumno(id, nom, ape, tel, dir, fech);
+
+						alumnos.add(a);
+					}else {
+						break;
+					}
 
 				}
 

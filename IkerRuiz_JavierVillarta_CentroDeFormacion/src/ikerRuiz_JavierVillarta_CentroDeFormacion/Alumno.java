@@ -8,8 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-
-public class Alumno  {
+public class Alumno {
 	private int numExpediente;
 	private String nombre;
 	private String apellidos;
@@ -17,8 +16,7 @@ public class Alumno  {
 	private String direccion;
 	private String fechNac;
 	private HashMap<Integer, Curso> cursos;
-	private String FICHERO = "Alumnos.bin";;
-	
+	private String FICHERO = "Alumnos.data";;
 
 	/**
 	 * @param nombre
@@ -57,13 +55,13 @@ public class Alumno  {
 					aux = a.getNumExpediente();
 				}
 			}
-		}else {
+		} else {
 			aux = 1;
 		}
 		return aux;
 
 	}
-	
+
 	public ArrayList<Alumno> leerFich() {
 		ArrayList<Alumno> alumnos = new ArrayList<>();
 		DataInputStream in = null;
@@ -74,15 +72,17 @@ public class Alumno  {
 			in = new DataInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
 			while (true) {
 				id = in.readInt();
-				nom = in.readUTF();
-				ape = in.readUTF();
-				tel = in.readUTF();
-				dir = in.readUTF();
-				fech = in.readUTF();
+				if (id != -1) {
+					nom = in.readUTF();
+					ape = in.readUTF();
+					tel = in.readUTF();
+					dir = in.readUTF();
+					fech = in.readUTF();
+				}else {
+					break;
+				}
 
-				
-				Alumno a = new Alumno(nom, ape, tel, dir, fech);
-				a.setNumExpediente(id);
+				Alumno a = new Alumno(id, nom, ape, tel, dir, fech);
 
 				alumnos.add(a);
 
@@ -151,7 +151,7 @@ public class Alumno  {
 	}
 
 	@Override
-	public String toString() { 
+	public String toString() {
 		return "Alumno [numExpediente=" + numExpediente + ", nombre=" + nombre + ", apellidos=" + apellidos
 				+ ", telefono=" + telefono + ", direccion=" + direccion + ", fechNac=" + fechNac + "]";
 	}
