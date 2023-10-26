@@ -1,22 +1,21 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.Date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class GestionAlumnos implements CRUD {
 
-	private String fichero = "Alumnos.bin";
+	private static final String FICHERO = "Alumnos.bin";
 	private Scanner sc = new Scanner(System.in);
 	private static Verificaciones verif = new Verificaciones();
-	private static FicherosBinarios fb = new FicherosBinarios();
-	private static File file = new File("Alumnos.bin");
-	private static HashMap<Integer, Alumno> alumnos = fb.leer(file);
 
 	/*
 	 * Metodo menu para seleccionar las acciones requeridas a ejecutar
@@ -69,12 +68,9 @@ public class GestionAlumnos implements CRUD {
 		Scanner sc = new Scanner(System.in);
 		int cont = 0;
 		boolean fallo = false;
-		boolean repe = false;
 
 		String nom, ape, tel, dir, fech;
-		Date fechNac = null;
 		;
-		SimpleDateFormat formatoFecha = new SimpleDateFormat("yyyy-mm-dd");
 
 		System.out.println("-ALTA ALUMNOS- \n");
 
@@ -166,36 +162,10 @@ public class GestionAlumnos implements CRUD {
 
 						if (cont < 5) {
 							cont = 0;
-							try {
-								fechNac = formatoFecha.parse(fech);
-							} catch (ParseException e) {
-								e.printStackTrace();
-							}
 
-							if (!alumnos.isEmpty()) {//Si el hashmap no esta vacio buscaremos el alumno
-								
-								// Iteramos hashmap alumnos para ver si ya existe el alumno a introducir
-								for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
-									Alumno a = entry.getValue();
-									if (nom == a.getNombre() && ape == a.getApellidos()) {
-										repe = true;
-										System.out.println("Alumno ya existente");
-									}
-								}
+							Alumno alumno = new Alumno(nom, ape, tel, dir, fech);
+							guardarFich(alumno);
 
-								// Si el alumno no esta repetido, lo creamos y lo guardamos
-								if (repe == false) {
-									Alumno alumno = new Alumno(nom, ape, tel, dir, fechNac);
-									alumnos.put(alumno.getNumExpediente(), alumno);
-
-									fb.guardar(alumno, file);
-								}
-							}else {//Si el hashmap esta vacio guardaremos directamente
-								Alumno alumno = new Alumno(nom, ape, tel, dir, fechNac);
-								alumnos.put(alumno.getNumExpediente(), alumno);
-
-								fb.guardar2(alumno, file);
-							}
 						} else {
 							System.out.println("Has llegado a 5 intentos, saliendo...");
 						}
@@ -216,8 +186,6 @@ public class GestionAlumnos implements CRUD {
 			System.out.println("Has llegado a 5 intentos, saliendo...");
 		}
 
-		
-
 	}
 
 	public void baja() {
@@ -233,11 +201,97 @@ public class GestionAlumnos implements CRUD {
 	}
 
 	public void mostrar() {
+		ArrayList<Alumno> alumnos = leerFich();
 
+		for (Alumno a : alumnos) {
+			a.toString();
+		}
 	}
 
 	public void inscribir() {
 
 	}
 
+	/*
+	 * Metodo para guardar los atributos de un objeto alumno en un fichero binario
+	 */
+	public void guardarFich(Alumno alumno) {
+		DataOutputStream out = null;
+		ArrayList<Alumno> alumnos = leerFich();
+		boolean repe = false;
+
+		for (Alumno a : alumnos) {
+			if ((a.getNombre().equalsIgnoreCase(alumno.getNombre())
+					&& (a.getApellidos().equalsIgnoreCase(alumno.getApellidos())))) {
+				repe = true;
+			}
+		}
+		if (repe != true) {
+			try {
+				out = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO, true)));
+
+				out.write(alumno.getNumExpediente());
+				out.writeUTF(alumno.getNombre());
+				out.writeUTF(alumno.getApellidos());
+				out.writeUTF(alumno.getTelefono());
+				out.writeUTF(alumno.getDireccion());
+				out.writeUTF(alumno.getFechNac().toString());
+
+			} catch (IOException e) {
+				// e.printStackTrace();
+			} finally {
+				try {
+					out.close();
+				} catch (IOException e) {
+					// e.printStackTrace();
+				}
+			}
+		} else {
+			System.out.println("Alumno ya existente.");
+		}
+
+	}
+
+	/*
+	 * Metodo para guardar en un ArrayList alumnos formados por los atributos
+	 * recibidos de un fichero binario
+	 */
+	public ArrayList<Alumno> leerFich() {
+		ArrayList<Alumno> alumnos = new ArrayList<>();
+		DataInputStream in = null;
+		int id = 0;
+		String nom, ape, tel, dir, fech;
+		File file = new File(FICHERO);
+
+		if (file.length() != 0) {
+			try {
+				in = new DataInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
+				while (true) {
+					id = in.readInt();
+					nom = in.readUTF();
+					ape = in.readUTF();
+					tel = in.readUTF();
+					dir = in.readUTF();
+					fech = in.readUTF();
+
+					Alumno a = new Alumno(nom, ape, tel, dir, fech);
+					a.setNumExpediente(id);
+
+					alumnos.add(a);
+
+				}
+
+			} catch (IOException e) {
+				e.printStackTrace();
+			} finally {
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		return alumnos;
+
+	}
 }

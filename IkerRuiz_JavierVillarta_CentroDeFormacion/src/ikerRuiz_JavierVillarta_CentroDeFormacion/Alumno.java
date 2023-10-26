@@ -1,10 +1,13 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
 
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
 import java.io.File;
-import java.io.Serializable;
-import java.util.Date;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+
 
 public class Alumno  {
 	private int numExpediente;
@@ -12,10 +15,10 @@ public class Alumno  {
 	private String apellidos;
 	private String telefono;
 	private String direccion;
-	private Date fechNac;
+	private String fechNac;
 	private HashMap<Integer, Curso> cursos;
-	private File file = new File("Alumnos.bin");
-	private FicherosBinarios fb = new FicherosBinarios();
+	private String FICHERO = "Alumnos.bin";;
+	
 
 	/**
 	 * @param nombre
@@ -24,17 +27,17 @@ public class Alumno  {
 	 * @param direccion
 	 * @param fechNac
 	 */
-	public Alumno(String nombre, String apellidos, String telefono, String direccion, Date fechNac) {
+	public Alumno(String nombre, String apellidos, String telefono, String direccion, String fechNac) {
 		this.nombre = nombre;
 		this.apellidos = apellidos;
 		this.telefono = telefono;
 		this.direccion = direccion;
 		this.fechNac = fechNac;
-		this.numExpediente = nuevoExpediente(file);
+		this.numExpediente = nuevoExpediente();
 
 	}
 
-	public Alumno(int expe, String nombre, String apellidos, String telefono, String direccion, Date fechNac) {
+	public Alumno(int expe, String nombre, String apellidos, String telefono, String direccion, String fechNac) {
 		this.numExpediente = expe;
 		this.nombre = nombre;
 		this.apellidos = apellidos;
@@ -44,13 +47,12 @@ public class Alumno  {
 
 	}
 
-	public int nuevoExpediente(File file) {
+	public int nuevoExpediente() {
+		File file = new File(FICHERO);
 		int aux = 0;
 		if (file.length() != 0) {
-			HashMap<Integer, Alumno> alumnos = fb.leer(file);
-			for (Map.Entry<Integer, Alumno> entry : alumnos.entrySet()) {
-				Alumno a = entry.getValue();
-
+			ArrayList<Alumno> alumnos = leerFich();
+			for (Alumno a : alumnos) {
 				if (a.getNumExpediente() > aux) {
 					aux = a.getNumExpediente();
 				}
@@ -59,6 +61,44 @@ public class Alumno  {
 			aux = 1;
 		}
 		return aux;
+
+	}
+	
+	public ArrayList<Alumno> leerFich() {
+		ArrayList<Alumno> alumnos = new ArrayList<>();
+		DataInputStream in = null;
+		int id = 0;
+		String nom, ape, tel, dir, fech;
+
+		try {
+			in = new DataInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
+			while (true) {
+				id = in.readInt();
+				nom = in.readUTF();
+				ape = in.readUTF();
+				tel = in.readUTF();
+				dir = in.readUTF();
+				fech = in.readUTF();
+
+				
+				Alumno a = new Alumno(nom, ape, tel, dir, fech);
+				a.setNumExpediente(id);
+
+				alumnos.add(a);
+
+			}
+
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				in.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+
+		return alumnos;
 
 	}
 
@@ -102,27 +142,18 @@ public class Alumno  {
 		this.direccion = direccion;
 	}
 
-	public Date getFechNac() {
+	public String getFechNac() {
 		return fechNac;
 	}
 
-	public void setFechNac(Date fechNac) {
+	public void setFechNac(String fechNac) {
 		this.fechNac = fechNac;
 	}
 
-	public HashMap<Integer, Curso> getCursos() {
-		return cursos;
-	}
-
-	public void setCursos(HashMap<Integer, Curso> cursos) {
-		this.cursos = cursos;
-	}
-
 	@Override
-	public String toString() { // Fallara por el hashmap 100%
+	public String toString() { 
 		return "Alumno [numExpediente=" + numExpediente + ", nombre=" + nombre + ", apellidos=" + apellidos
-				+ ", telefono=" + telefono + ", direccion=" + direccion + ", fechNac=" + fechNac + ", cursos=" + cursos
-				+ "]";
+				+ ", telefono=" + telefono + ", direccion=" + direccion + ", fechNac=" + fechNac + "]";
 	}
 
 }
