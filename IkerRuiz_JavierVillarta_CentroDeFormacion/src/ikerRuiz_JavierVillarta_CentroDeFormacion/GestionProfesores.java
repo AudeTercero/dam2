@@ -142,59 +142,60 @@ public class GestionProfesores implements CRUD {
 			System.out.println("Se han superado el maximo de errores permitidos(5)");
 		}
 
-	
-
 	}
 
 	public void baja() {
 		System.out.println("Introduce el dni del Profesor que quiera dar de baja");
+
+		String dni = sc.nextLine();
+		ArrayList<Profesor> profesores = leerFich();
+		ObjectOutputStream out = null;
 		
-		String dni  = sc.nextLine();
-		ArrayList <Profesor> profesores = leerFich();
-		ObjectOutputStream out = null;		
-		for(Profesor p: profesores) {
-			if(dni.equalsIgnoreCase(p.getDni())) {
-				profesores.remove(p);
-			}
-			
-		} 
 		try {
 			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO)));
-			for(Profesor p: profesores) {
-				out.writeObject(p);
-			}	
-			
-			
-		}catch (Exception e) {
+			for (Profesor p : profesores) {
+				if(!dni.equalsIgnoreCase(p.getDni())) {
+					out.writeObject(p);
+				}
+			}
+
+		} catch (Exception e) {
 			e.printStackTrace();
+		}finally {
+			try {
+			out.close();
+			}catch(IOException e) {
+				e.fillInStackTrace();
+			}
 		}
-		
+
 	}
 
 	public void modificar() {
 		System.out.println("Introduce el dni del profesor a modificar");
-		String dni  = sc.nextLine();
+		String dni = sc.nextLine();
 		ObjectOutputStream out = null;
-		Profesor profe;
+		ArrayList <Profesor> profesores = leerFich();
+		
 		try {
 			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(FICHERO)));
-			
-		}catch (Exception e) {
+
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public void buscar() {
 		System.out.println("Introduce el dni del profesor");
-		String dni  = sc.nextLine();
+		String dni = sc.nextLine();
 		ObjectInputStream in = null;
 		Profesor profe;
 		try {
 			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
-			while(true) {
-				profe = (Profesor)in.readObject();
-				if(dni.equalsIgnoreCase(profe.getDni())) {
+			while (true) {
+				profe = (Profesor) in.readObject();
+				if (dni.equalsIgnoreCase(profe.getDni())) {
 					System.out.println("****PROFESOR****");
 					System.out.println("Dni: " + profe.getDni());
 					System.out.println("Nombre: " + profe.getNombre());
@@ -202,10 +203,10 @@ public class GestionProfesores implements CRUD {
 					System.out.println("Telefono: " + profe.getTelefono());
 				}
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 	}
 
 	public void mostrar() {
@@ -241,20 +242,25 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public ArrayList<Profesor> leerFich() {
-
+		File fichero = new File(FICHERO);
 		ObjectInputStream in = null;
 		ArrayList<Profesor> profesores = new ArrayList<>();
 
 		try {
-			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
-			while (true) {
-				profesores.add((Profesor) in.readObject());
+			if (fichero.exists()) {
+				in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)));
+				while (true) {
+					profesores.add((Profesor) in.readObject());
+				}
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				in.close();
+				if(in !=null) {
+					in.close();
+				}
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
@@ -264,28 +270,26 @@ public class GestionProfesores implements CRUD {
 	}
 
 	public void guardarFich(Profesor profe) {
+		File fichero = new File(FICHERO);
 		FileOutputStream fileOut = null;
 		BufferedOutputStream bufOut = null;
 		ObjectOutputStream out = null;
-		ArrayList<Profesor> listProfe = new ArrayList<>();
+		ArrayList<Profesor> listProfe = leerFich();
 		boolean existe = false;
-		try {
-			if (leerFich() != null) {
-				listProfe = leerFich();
-			}
-			fileOut = new FileOutputStream(FICHERO);
+		try {			
+			fileOut = new FileOutputStream(fichero);
 			bufOut = new BufferedOutputStream(fileOut);
 			out = new ObjectOutputStream(bufOut);
-			
 			for (Profesor p : listProfe) {
 				out.writeObject(p);
-				if(p.getDni().equalsIgnoreCase(profe.getDni())) {
+				if (p.getDni().equalsIgnoreCase(profe.getDni())) {
 					existe = true;
 				}
 			}
-			if(!existe) {
+
+			if (!existe) {
 				out.writeObject(profe);
-			}else {
+			} else {
 				System.out.println("Ese profesor ya existe. No puede haber dos Profesores con el mismo dni.");
 			}
 		} catch (IOException ex) {
