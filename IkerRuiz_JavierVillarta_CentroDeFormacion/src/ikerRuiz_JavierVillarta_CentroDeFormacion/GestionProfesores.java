@@ -148,7 +148,7 @@ public class GestionProfesores implements CRUD {
 		File fichero = new File(FICHERO);
 		System.out.println("Introduce el dni del Profesor que quiera dar de baja");
 		String dni = sc.nextLine();
-		
+
 		ArrayList<Profesor> profesores = leerFich();
 		ObjectOutputStream out = null;
 
@@ -157,7 +157,7 @@ public class GestionProfesores implements CRUD {
 			for (Profesor p : profesores) {
 				if (!dni.equalsIgnoreCase(p.getDni())) {
 					out.writeObject(p);
-					
+
 				}
 			}
 
@@ -175,44 +175,82 @@ public class GestionProfesores implements CRUD {
 
 	public void modificar() {
 		File fichero = new File(FICHERO);
-		System.out.println("Introduce el dni del profesor a modificar");
-		String dni = sc.nextLine();
-		
 		ObjectOutputStream out = null;
 		ArrayList<Profesor> profesores = leerFich();
-		
 		Profesor profeAux = null;
-		if (!profesores.isEmpty()) {
-			for (Profesor p : profesores) {
-				if (dni.equalsIgnoreCase(p.getDni())) {
-					profeAux = p;
-					
-				}
-			}
-			profesores.remove(profeAux);
-			System.out.println("Introduce el nombre nuevo:");
-			String nombre = sc.nextLine();
-			
-			profeAux.setNombre(nombre);
-			
-			
-			profesores.add(profeAux);
-			
-		}
-		try {
-			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero)));
-			for (Profesor p : profesores) {
-				out.writeObject(p);
-			}
+		String dni;
+		if (!profesores.isEmpty()) {// Comprobamos que hay profesores guardados
+			do { 
+				boolean salir = false;
+				do {
+					System.out.println("Introduce el dni del profesor a modificar o 0 para salir");
+					dni = sc.nextLine();
+					if (dni.equalsIgnoreCase("0")) {
+						salir = true;
+					} else {
+						try {
+							salir = true;
+							verif.hayAlgo(dni);
+							for (Profesor p : profesores) {
+								if (dni.equalsIgnoreCase(p.getDni())) {
+									profeAux = p;
+									salir = false;
+								}
+							}
+							while(!salir){//Esto tengo que modificarlo
+								System.out.println("Quiere modificar al profesor "+profeAux.getNombre()+" con dni "+profeAux.getDni()+" Si o No");
+								String confirm = sc.nextLine();
+								if(confirm.equalsIgnoreCase("si")) {
+									salir = true;
+								}else if(confirm.equalsIgnoreCase("no")) {
+									
+								}
+								
+							}
+						} catch (MisExceptions mi) {
+							System.out.println(mi);
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		}finally {
-			try {
-				out.close();
-			}catch(Exception e) {
+						}
+					}
+					
+
+				} while (!salir);
 				
-			}
+				
+
+				if (!dni.equalsIgnoreCase("0")) {
+					
+
+					
+
+					profesores.remove(profeAux);
+					System.out.println("Introduce el nombre nuevo:");
+					String nombre = sc.nextLine();
+
+					profeAux.setNombre(nombre);
+
+					profesores.add(profeAux);
+
+					try {
+						out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero)));
+						for (Profesor p : profesores) {
+							out.writeObject(p);
+						}
+
+					} catch (Exception e) {
+						e.printStackTrace();
+					} finally {
+						try {
+							out.close();
+						} catch (Exception e) {
+
+						}
+					}
+				}
+
+			} while (dni.equalsIgnoreCase("0"));
+		} else {
+			System.out.println("No hay Profesores guardados");
 		}
 
 	}
@@ -271,7 +309,7 @@ public class GestionProfesores implements CRUD {
 					e.printStackTrace();
 				}
 			}
-		}else {
+		} else {
 			System.out.println("El fichero no Existe");
 		}
 
