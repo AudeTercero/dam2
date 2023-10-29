@@ -56,6 +56,9 @@ public class GestionProfesores implements CRUD {
 		} while (!op.equalsIgnoreCase("0"));
 	}
 
+	/**
+	 * 
+	 */
 	public void alta() {
 		Profesor profe;
 		String dni, nombre, direccion, telefono;
@@ -110,7 +113,10 @@ public class GestionProfesores implements CRUD {
 				if (contError < 5) {
 
 					contError = 0;
-					do {// Inicio de do while que controla si hay fallo
+					/**
+					 * Inicio de do while que controla si hay fallo
+					 */
+					do {
 						fallo = false;
 						System.out.println("Introduce el telefono del Profesor:");
 						telefono = sc.nextLine();
@@ -180,7 +186,7 @@ public class GestionProfesores implements CRUD {
 		Profesor profeAux = null;
 		String dni;
 		if (!profesores.isEmpty()) {// Comprobamos que hay profesores guardados
-			do { 
+			do {
 				boolean salir = false;
 				do {
 					System.out.println("Introduce el dni del profesor a modificar o 0 para salir");
@@ -189,45 +195,145 @@ public class GestionProfesores implements CRUD {
 						salir = true;
 					} else {
 						try {
-							salir = true;
+
 							verif.hayAlgo(dni);
 							for (Profesor p : profesores) {
 								if (dni.equalsIgnoreCase(p.getDni())) {
 									profeAux = p;
-									salir = false;
+
 								}
 							}
-							while(!salir){//Esto tengo que modificarlo
-								System.out.println("Quiere modificar al profesor "+profeAux.getNombre()+" con dni "+profeAux.getDni()+" Si o No");
+							do {
+								System.out.println("Quiere modificar al profesor " + profeAux.getNombre() + " con dni "
+										+ profeAux.getDni() + " Si o No");
 								String confirm = sc.nextLine();
-								if(confirm.equalsIgnoreCase("si")) {
+								if (confirm.equalsIgnoreCase("si")) {
 									salir = true;
-								}else if(confirm.equalsIgnoreCase("no")) {
-									
+
+								} else if (confirm.equalsIgnoreCase("no")) {
+									salir = true;
+									dni = "0";
+									System.out.println("Modificacion cancelada");
+
+								} else {
+									System.out.println("Error, no es ningun de las opciones ofrecidas");
 								}
-								
-							}
+							} while (!salir && !dni.equalsIgnoreCase("0"));
+
 						} catch (MisExceptions mi) {
 							System.out.println(mi);
 
 						}
 					}
-					
 
-				} while (!salir);
-				
-				
+				} while (!salir && !dni.equalsIgnoreCase("0"));
 
 				if (!dni.equalsIgnoreCase("0")) {
-					
-
-					
 
 					profesores.remove(profeAux);
-					System.out.println("Introduce el nombre nuevo:");
-					String nombre = sc.nextLine();
+					for(Profesor p : profesores) {
+						System.out.println(p.getDni());
+					}
+					String opc;
+					do {
+						System.out.println("****MENU MODIFICACION PARA EL PROFESOR CON DNI: "+ profeAux.getDni()+"****");
+						System.out.println(
+								"1. Modificar Dni \n2. Modificar Nombre \n3. Modificar direccion \n4. Modificar telefono \n0. Salir \n");
+						opc = sc.nextLine();
+						switch (opc) {
+						case "1":
+							boolean dniBien = true;
+							boolean dniExist = false;
+							String oldDni = profeAux.getDni();
+							String newDni;
+							do {
+								System.out.println("Introduzca el nuevo dni:");
+								newDni = sc.nextLine();
+								for(Profesor p : profesores) {
+									if(newDni.equalsIgnoreCase(p.getDni())){
+										dniExist = true;
+									}
+								}
+								if(!dniExist) {
+									try {
+										verif.hayAlgo(newDni);
+									} catch (MisExceptions e) {
+										System.out.println(e);
+										dniBien = false;
+									}
+									
+								}else {
+									System.out.println("Ese dni ya existe");
+									dniBien = false;
+								}
+								
+								
+							} while (!dniBien);
+							profeAux.setDni(newDni);
+							System.out.println("Se ha modificado el dni "+oldDni+" por el dni "+newDni);
+							break;
+						case "2":
+							String oldNom = profeAux.getNombre();
+							String newNom;
+							boolean nomBien = true;
+							do {
+								System.out.println("Introduzca el nuevo nombre:");
+								newNom = sc.nextLine();
+								try {
+									verif.hayAlgo(newNom);
+								} catch (MisExceptions e) {
+									System.out.println(e);
+									nomBien = false;
+								}
+							} while (!nomBien);
+							profeAux.setNombre(newNom);
+							System.out.println("Se ha modificado el nombre "+oldNom+" por el nombre "+newNom);
+							break;
+						case "3":
+							boolean direBien = true;
+							String oldDire = profeAux.getDireccion();
+							String newDire;
+							do {
+								System.out.println("Introduzca la nuevo direccion:");
+								newDire = sc.nextLine();
+								try {
+									verif.hayAlgo(newDire);
+								} catch (MisExceptions e) {
+									System.out.println(e);
+									direBien = false;
+								}
 
-					profeAux.setNombre(nombre);
+							} while (!direBien);
+							profeAux.setDireccion(newDire);
+							System.out.println("Se ha modificado la direccion "+oldDire+" por la direccion "+newDire);
+							break;
+						case "4":
+							boolean telBien = true;
+							String oldTel = profeAux.getTelefono();
+							String newTel;
+							do {
+								System.out.println("Introduzca el nuevo telefono:");
+								newTel = sc.nextLine();
+								try {
+									verif.nueveCaracteres(newTel);
+									verif.esNum(newTel);
+								} catch (MisExceptions e) {
+									System.out.println(e);
+									telBien = false;
+								}
+							} while (!telBien);
+							profeAux.setTelefono(newTel);
+							System.out.println("Se ha modificado el telefono "+oldTel+" por el telefono "+newTel);
+							break;
+						case "0":
+
+							System.out.println("Saliendo");
+							break;
+						default:
+							System.out.println("Error, opcion inexistente");
+						}
+
+					} while (!opc.equalsIgnoreCase("0"));
 
 					profesores.add(profeAux);
 
@@ -248,7 +354,7 @@ public class GestionProfesores implements CRUD {
 					}
 				}
 
-			} while (dni.equalsIgnoreCase("0"));
+			} while (!dni.equalsIgnoreCase("0"));
 		} else {
 			System.out.println("No hay Profesores guardados");
 		}
@@ -315,6 +421,12 @@ public class GestionProfesores implements CRUD {
 
 	}
 
+	/**
+	 * Metodo para leer fichero serializado
+	 * 
+	 * @return Coleccion con los objetos Profesor
+	 */
+
 	public ArrayList<Profesor> leerFich() {
 		File fichero = new File(FICHERO);
 		ObjectInputStream in = null;
@@ -343,6 +455,11 @@ public class GestionProfesores implements CRUD {
 		return profesores;
 	}
 
+	/**
+	 * Metodo para guardar fichero serializado.
+	 * 
+	 * @param profe
+	 */
 	public void guardarFich(Profesor profe) {
 		File fichero = new File(FICHERO);
 		FileOutputStream fileOut = null;
