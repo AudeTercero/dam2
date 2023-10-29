@@ -150,35 +150,88 @@ public class GestionProfesores implements CRUD {
 
 	}
 
+	/**
+	 * Metodo para dar de baja a profesores
+	 */
 	public void baja() {
 		File fichero = new File(FICHERO);
-		System.out.println("Introduce el dni del Profesor que quiera dar de baja");
-		String dni = sc.nextLine();
-
 		ArrayList<Profesor> profesores = leerFich();
-		ObjectOutputStream out = null;
+		String dni = null;
 
-		try {
-			out = new ObjectOutputStream(new BufferedOutputStream(new FileOutputStream(fichero)));
-			for (Profesor p : profesores) {
-				if (!dni.equalsIgnoreCase(p.getDni())) {
-					out.writeObject(p);
+		if (!profesores.isEmpty()) {
+			do {
+				boolean exist = false;
+				ObjectOutputStream out = null;
+				profesores = leerFich();
+				if (!profesores.isEmpty()) {
+					System.out.println("Introduce el dni del Profesor que quiera dar de baja o pulsa 0 para salir");
+					dni = sc.nextLine();
+					try {
+						verif.hayAlgo(dni);
+						if (!dni.equalsIgnoreCase("0")) {
+							for (Profesor p : profesores) {
+								if (dni.equalsIgnoreCase(p.getDni())) {
+									exist = true;
+								}
+							}
+							if (exist) {
+								String opc;
+								do {
+									System.out.println("Seguro que quiere eliminar el profesor con el dni: " + dni+". Escriba si o no");
+									opc = sc.nextLine();
+									if (opc.equalsIgnoreCase("si")) {
+										try {
+											out = new ObjectOutputStream(
+													new BufferedOutputStream(new FileOutputStream(fichero)));
+											for (Profesor p : profesores) {
+												if (!dni.equalsIgnoreCase(p.getDni())) {
+													out.writeObject(p);
 
+												}
+											}
+
+										} catch (Exception e) {
+											e.printStackTrace();
+										} finally {
+											try {
+												out.close();
+											} catch (IOException e) {
+												e.fillInStackTrace();
+											}
+										}
+										System.out.println("Profesor eliminado correctamente");
+									} else if (opc.equalsIgnoreCase("no")) {
+										System.out.println("Porfesor no eliminado");
+
+									} else {
+										System.out.println("Error, no hay esa opcion");
+									}
+
+								} while (!opc.equalsIgnoreCase("si") && !opc.equalsIgnoreCase("no"));
+
+							} else {
+								System.out.println("Dni no encontrado");
+							}
+						}
+
+					} catch (MisExceptions e) {
+						System.out.println(e);
+					}
+				} else {
+					System.out.println("Ya no quedan mas profesores");
+					dni = "0";
 				}
-			}
 
-		} catch (Exception e) {
-			e.printStackTrace();
-		} finally {
-			try {
-				out.close();
-			} catch (IOException e) {
-				e.fillInStackTrace();
-			}
+			} while (!dni.equalsIgnoreCase("0"));
+		} else {
+			System.out.println("No hay profesores guardados");
 		}
 
 	}
 
+	/**
+	 * Metodo para modificar la informacion de un profesor
+	 */
 	public void modificar() {
 		File fichero = new File(FICHERO);
 		ObjectOutputStream out = null;
@@ -231,12 +284,13 @@ public class GestionProfesores implements CRUD {
 				if (!dni.equalsIgnoreCase("0")) {
 
 					profesores.remove(profeAux);
-					for(Profesor p : profesores) {
+					for (Profesor p : profesores) {
 						System.out.println(p.getDni());
 					}
 					String opc;
 					do {
-						System.out.println("****MENU MODIFICACION PARA EL PROFESOR CON DNI: "+ profeAux.getDni()+"****");
+						System.out.println(
+								"****MENU MODIFICACION PARA EL PROFESOR CON DNI: " + profeAux.getDni() + "****");
 						System.out.println(
 								"1. Modificar Dni \n2. Modificar Nombre \n3. Modificar direccion \n4. Modificar telefono \n0. Salir \n");
 						opc = sc.nextLine();
@@ -249,28 +303,27 @@ public class GestionProfesores implements CRUD {
 							do {
 								System.out.println("Introduzca el nuevo dni:");
 								newDni = sc.nextLine();
-								for(Profesor p : profesores) {
-									if(newDni.equalsIgnoreCase(p.getDni())){
+								for (Profesor p : profesores) {
+									if (newDni.equalsIgnoreCase(p.getDni())) {
 										dniExist = true;
 									}
 								}
-								if(!dniExist) {
+								if (!dniExist) {
 									try {
 										verif.hayAlgo(newDni);
 									} catch (MisExceptions e) {
 										System.out.println(e);
 										dniBien = false;
 									}
-									
-								}else {
+
+								} else {
 									System.out.println("Ese dni ya existe");
 									dniBien = false;
 								}
-								
-								
+
 							} while (!dniBien);
 							profeAux.setDni(newDni);
-							System.out.println("Se ha modificado el dni "+oldDni+" por el dni "+newDni);
+							System.out.println("Se ha modificado el dni " + oldDni + " por el dni " + newDni);
 							break;
 						case "2":
 							String oldNom = profeAux.getNombre();
@@ -287,7 +340,7 @@ public class GestionProfesores implements CRUD {
 								}
 							} while (!nomBien);
 							profeAux.setNombre(newNom);
-							System.out.println("Se ha modificado el nombre "+oldNom+" por el nombre "+newNom);
+							System.out.println("Se ha modificado el nombre " + oldNom + " por el nombre " + newNom);
 							break;
 						case "3":
 							boolean direBien = true;
@@ -305,7 +358,8 @@ public class GestionProfesores implements CRUD {
 
 							} while (!direBien);
 							profeAux.setDireccion(newDire);
-							System.out.println("Se ha modificado la direccion "+oldDire+" por la direccion "+newDire);
+							System.out.println(
+									"Se ha modificado la direccion " + oldDire + " por la direccion " + newDire);
 							break;
 						case "4":
 							boolean telBien = true;
@@ -323,7 +377,7 @@ public class GestionProfesores implements CRUD {
 								}
 							} while (!telBien);
 							profeAux.setTelefono(newTel);
-							System.out.println("Se ha modificado el telefono "+oldTel+" por el telefono "+newTel);
+							System.out.println("Se ha modificado el telefono " + oldTel + " por el telefono " + newTel);
 							break;
 						case "0":
 
@@ -361,32 +415,49 @@ public class GestionProfesores implements CRUD {
 
 	}
 
+	/**
+	 * Metodo para buscar profesores
+	 */
 	public void buscar() {
-		System.out.println("Introduce el dni del profesor");
-		String dni = sc.nextLine();
-		ObjectInputStream in = null;
-		Profesor profe;
-		try {
-			in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
-			while (true) {
-				profe = (Profesor) in.readObject();
-				if (dni.equalsIgnoreCase(profe.getDni())) {
-					System.out.println("****PROFESOR****");
-					System.out.println("Dni: " + profe.getDni());
-					System.out.println("Nombre: " + profe.getNombre());
-					System.out.println("Direccion: " + profe.getDireccion());
-					System.out.println("Telefono: " + profe.getTelefono());
+		String dni;
+
+		do {
+			System.out.println("Introduce el dni del profesor que quiera buscar o pulsa 0 para salir");
+			dni = sc.nextLine();
+			ObjectInputStream in = null;
+			Profesor profe;
+			boolean existe = false;
+			try {
+				in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(FICHERO)));
+				while (true) {
+					profe = (Profesor) in.readObject();
+					if (dni.equalsIgnoreCase(profe.getDni())) {
+						System.out.println("****PROFESOR****");
+						System.out.println("Dni: " + profe.getDni());
+						System.out.println("Nombre: " + profe.getNombre());
+						System.out.println("Direccion: " + profe.getDireccion());
+						System.out.println("Telefono: " + profe.getTelefono());
+						existe = true;
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				if (!existe) {
+					System.out.println("Profesor no encontrado");
 				}
 			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		} while (!dni.equalsIgnoreCase("0"));
 
 	}
 
+	/**
+	 * Metodo que muestra todos los profesores del fichero
+	 */
 	public void mostrar() {
 		File fichero = new File(FICHERO);
 		ObjectInputStream in = null;
+		boolean hayProf = false;
 		if (fichero.exists()) {
 			try {
 				in = new ObjectInputStream(new BufferedInputStream(new FileInputStream(fichero)));
@@ -397,6 +468,7 @@ public class GestionProfesores implements CRUD {
 					System.out.println("Nombre: " + profe.getNombre());
 					System.out.println("Direccion: " + profe.getDireccion());
 					System.out.println("Telefono: " + profe.getTelefono());
+					hayProf = true;
 				}
 			} catch (EOFException e) {
 
@@ -409,6 +481,9 @@ public class GestionProfesores implements CRUD {
 				e.printStackTrace();
 				System.out.println("Error al mostrar Profesores");
 			} finally {
+				if(!hayProf) {
+					System.out.println("No hay profesores guardados");
+				}
 				try {
 					in.close();
 				} catch (IOException e) {
