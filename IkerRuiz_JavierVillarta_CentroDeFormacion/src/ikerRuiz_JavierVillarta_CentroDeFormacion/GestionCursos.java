@@ -1,14 +1,17 @@
 package ikerRuiz_JavierVillarta_CentroDeFormacion;
+
 import java.util.Scanner;
 import java.util.HashMap;
 
-public class GestionCursos {
-	private HashMap<String,Curso> cursos = new HashMap<>();
-	private String fichero = "Cursos.bin";
+public class GestionCursos implements CRUD {
+	private HashMap<String, Curso> cursos = new HashMap<>();
+	private static final String FICHERO = "Cursos.txt";
 	private Scanner sc = new Scanner(System.in);
+	private Verificaciones verif = new Verificaciones();
+
 	public void menu() {
 		System.out.println("-- GESTION CURSOS --");
-		
+
 		String op = null;
 
 		do {
@@ -27,7 +30,7 @@ public class GestionCursos {
 				modificar();
 				break;
 			case "4":
-				consulta();
+				buscar();
 				break;
 			case "5":
 				mostrar();
@@ -42,23 +45,67 @@ public class GestionCursos {
 		} while (!op.equalsIgnoreCase("0"));
 	}
 
-	public static void alta() {
+	public void alta() {
+		Curso curso;
+		String nombre, descripcion;
+		int contError = 0;
+		boolean fallo = false;
+		do {
+			fallo = false;
+			System.out.println("Introduce el nombre del curso:");
+			nombre = sc.nextLine();
+			try {
+				verif.hayAlgo(nombre);
+			} catch (MisExceptions e) {
+				System.out.println(e);
+				fallo = true;
+				contError++;
+			}
+
+		} while (fallo && contError < 5);
+		
+		if (contError < 5) {
+			contError = 0;
+
+			do {// Inicio de do while que controla si hay fallo
+				fallo = false;
+				System.out.println("Introduce la descripcion del Curso:");
+				descripcion = sc.nextLine();
+				try {
+					verif.hayAlgo(descripcion);
+				} catch (MisExceptions e) {
+					System.out.println(e);
+					fallo = true;
+					contError++;
+				}
+			} while (fallo == true && contError != 5);// fin de do while que controla si hay fallo
+			if (contError != 5) {
+
+				curso = new Curso( nombre, descripcion);
+				guardarFich(curso);
+			}
+
+		}
+		
 
 	}
 
-	public static void baja() {
+	public void baja() {
 
 	}
 
-	public static void modificar() {
+	public void modificar() {
 
 	}
 
-	public static void consulta() {
+	public void buscar() {
 
 	}
 
-	public static void mostrar() {
+	public void mostrar() {
 
+	}
+	public void guardarFich(Curso curso) {
+		
 	}
 }

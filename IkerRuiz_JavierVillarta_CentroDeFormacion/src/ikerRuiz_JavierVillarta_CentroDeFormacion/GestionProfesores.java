@@ -76,7 +76,7 @@ public class GestionProfesores implements CRUD {
 				fallo = true;
 				contError++;
 			}
-		} while (fallo == true && contError != 5);// fin de do while que controla si hay fallo
+		} while (fallo && contError != 5);// fin de do while que controla si hay fallo
 
 		if (contError < 5) {
 			contError = 0;
